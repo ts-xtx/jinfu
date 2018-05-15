@@ -1,6 +1,6 @@
  # Android generated
 
-/application/database.php
+./application/database.php
 
 # Mac
 .DS_Store
