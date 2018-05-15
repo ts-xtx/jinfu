@@ -1,6 +1,9 @@
  # Android generated
 
-.database
+/application/database.php
+
+# Mac
+.DS_Store
 
 # Runtime
 /Runtime
