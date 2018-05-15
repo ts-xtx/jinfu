@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>FRMAE</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><block name="title"></block></title>
+    <js href="__STATIC__/js/jquery.1.11.2.js" />
+    <js href="__STATIC__/layer/layer.js" />
+    <js href="__JS__/public.js"/>
+    <css href="__CSS__/public.css"/>
+    <block name="js"></block>
+    <block name="css"></block>
+</head>
+<body>
+    <block name="body"></block>
+    <input type="hidden" value="{$_GET['id']}" class="headId" name="headId">
+
+    <notempty name="page">
+        <div class="buttom-pager"></div>
+        <div class="pager">
+            {$page}
+        </div>
+    <else/>
+        <div class="bottom-div"></div>
+    </notempty>
+    
+    <script>
+        var headId=$('.headId').val();
+    </script>
+    <block name="jsDiv"></block>
+</body>
+</html>

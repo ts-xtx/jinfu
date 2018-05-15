@@ -1,0 +1,82 @@
+<extend name="base"/>
+<block name="title"> 模块管理 </block>
+<block name="css">
+</block>
+<block name="body">
+    <div class="done-div">
+        <table class="done-table">
+            <volist name="list" id="v">
+                <tr>
+                    <td>
+                        <label>
+                            <input type="checkbox" data-is="1" <eq name="v.is_" value="1"> checked </eq> value="{$v.id}" class="checks"/> {$v.name} 
+                        </label>
+                    </td>
+                </tr>
+                <notempty name="v._child">
+                    <volist name="v._child" id="vo">
+                        <tr>
+                            <td>
+                                <label>
+                                    <input type="checkbox" data-is="2" <eq name="vo.is_" value="1"> checked </eq> data-ids="{$v.id}" value="{$vo.id}" class="checks"/> <span style="text-indent:1.5rem;display: inline-block;">{$vo.name}</span> 
+                                </label>
+                            </td>
+                        </tr>
+                    </volist>
+                </notempty>
+            </volist>
+        </table>
+        <div style="width: 160px;margin: 0 auto">
+            <button class="done-sub" align="center">提交</button>
+        </div>
+    </div>
+</block>
+<block name="jsDiv">
+    <script>
+        $(function(){
+            $('.checks').click(function(){
+                var my=$(this);
+                if(my.attr('data-is')=='1'){
+                    if(!my.is(':checked')){
+                        $('input[data-ids='+my.val()+']').prop('checked',false);
+                    }else{
+                        $('input[data-ids='+my.val()+']').prop('checked',true);
+                    }
+                }else{
+                    if(my.is(':checked')){
+                        $('input[value='+my.attr('data-ids')+']').prop('checked',true);
+                    }else{
+                        if($('input[data-ids='+my.attr('data-ids')+']:checked').length==0){
+                            $('input[value='+my.attr('data-ids')+']').prop('checked',false);
+                        }
+                    }
+                }
+            })
+
+            $('.done-sub').click(function(){
+                var yeslen=$('input[class=checks]:checked');
+                if(yeslen.length==0){
+                    layer.msg('请选择模块',{icon:5,time:1000});
+                    return false;
+                }
+                var str='';
+                for(var i=0;i<yeslen.length;i++){
+                    str+=yeslen.eq(i).val()+',';
+                }
+                var data={id:headId,join_id:str};
+                subAjax(data,'/power/doRoleJoin',function(cur){
+                    if(cur.code==0){
+                        layer.msg(cur.msg,{icon:1,time:1000});
+                        setTimeout(function(){
+                            parent.location.reload();
+                        },1000);
+                    }else{
+                        layer.msg(cur.msg,{icon:5,time:1000});
+                    }
+                },'确定提交吗？');
+
+            })
+
+        })
+    </script>
+</block>

@@ -1,0 +1,87 @@
+<extend name="base"/>
+<block name="title"> 用户列表 </block>
+<block name="css">
+    <link href="__STATIC__/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
+</block>
+<block name="body">
+    <div class="search">
+        <form action="/Member/index" method="post">
+            <span>模糊搜索：</span>
+            <input type="text" placeholder="姓名、手机号（支持模糊搜索）" value="{$search['like_str']}" name="like_str"/>
+            <span>注册时间：</span>
+            <input type="text" placeholder="开始时间" id="start-time" value="{$search['start-time']}" name="start-time"/> -
+            <input type="text" placeholder="结束时间" id="end-time" value="{$search['end-time']}" name="end-time"/>
+            <span>状态：</span>
+            <select name="status">
+                <option value="">全部</option>
+                <option <eq name="search.status" value="1">selected</eq> value="1">正常</option>
+                <option <eq name="search.status" value="2">selected</eq> value="2">禁用</option>
+            </select>
+            <button>搜索</button>
+        </form>
+    </div>
+
+    <table class="table">
+        <tr>
+            <th class="tr-05">编号</th>
+            <th>用户头像</th>
+            <th>用户名</th>
+            <th>性别</th>
+            <th>创建时间</th>
+            <th>状态</th>
+            <th>操作</th>
+        </tr>
+        <notempty name="list.data">
+            <volist name="list.data" id="v">
+                <tr>
+                    <td>{$v.id}</td>
+                    <td><img onclick="layer_photo('{$v.headimg}','{$v.nickname}');" src="{$v.headimg}"></td>
+                    <td>{$v.nickname}</td>
+                    <td><eq name="v.sex" value="1">男<else/>女</eq></td>
+                    <td>{:date('Y-m-d H:i',$v['create_time'])}</td>
+                    <td><eq name="v.status" value="1">正常<else/>禁用</eq></td>
+                    <td>
+                        <a href="javascript:;">订单</a>
+                        <a onclick="showLayerFim('用户信息','/Member/showUser?id={$v.id}');" href="javascript:;">详情</a>
+                        <eq name="v.status" value="1">
+                            <a class="is_user" data-id="{$v.id}" data-flag="2" href="javascript:;">禁用</a>
+                        <else/>
+                            <a class="is_user" data-id="{$v.id}" data-flag="1" href="javascript:;">开启</a>
+                        </eq>
+                    </td>
+                </tr>
+            </volist>
+        <else/>
+            <tr>
+                <td colspan="7">暂无数据</td>
+            </tr>
+        </notempty>
+    </table>
+</block>
+<block name="jsDiv">
+    <!-- 底部js文件 -->
+    <js href="__STATIC__/laydate/laydate.js"/>
+    <js href="__STATIC__/js/time_choice.js" />
+    <script>
+        $('.is_user').click(function(){
+            var id=$(this).attr('data-id');
+            var flag=$(this).attr('data-flag');
+            var data={flag:flag,id:id};
+            if(flag==1){
+                var str='确定解除用户禁用状态吗？';
+            }else{
+                var str='确定禁用用户吗？';
+            }
+            subAjax(data,'/Member/delUser',function(cur){
+                if(cur.code==0){
+                    layer.msg(cur.msg,{icon:1,time:1000});
+                    setTimeout(function(){
+                        location.reload();
+                    },1000);
+                }else{
+                    layer.msg(cur.msg,{icon:5,time:1000});
+                }
+            },str);
+        })
+    </script>
+</block>

@@ -1,0 +1,79 @@
+<extend name="base"/>
+<block name="title"> 管理员管理 </block>
+<block name="css">
+</block>
+<block name="body">
+    <!-- html代码 -->
+    <div class="search">
+        <form action="/power/user" method="post">
+            <span>模糊搜索：</span>
+            <input type="text" placeholder="登录名、姓名、手机号（支持模糊搜索）" value="{$search['like_str']}" name="like_str"/>
+            <span>注册时间：</span>
+            <input type="text" placeholder="开始时间" id="start-time" value="{$search['start-time']}" name="start-time"/> -
+            <input type="text" placeholder="结束时间" id="end-time" value="{$search['end-time']}" name="end-time"/>
+            <button>搜索</button>
+        </form>
+    </div>
+    <div class="btn-caoz">
+        <a class="btn-a" onclick="showLayerFim('添加模块','/power/doneUser');" href="javascript:;">添加模块</a>
+    </div>
+    <table class="table">
+        <tr>
+            <th class="tr-05">Id</th>
+            <th class="">头像</th>
+            <th class="">账号</th>
+            <th class="">姓名</th>
+            <th class="">手机号</th>
+            <th class="">最后登录时间</th>
+            <th class="">所属角色</th>
+            <th class="">状态</th>
+            <th class="">操作</th>
+        </tr>
+        <notempty name="list['data']">
+            <volist name="list['data']" id="v">
+    	        <tr>
+    	        	<td>{$v.id}</td>
+    	        	<td>
+                        <img onclick="layer_photo('{$v.headimg}','{$v.realname}');" src="{$v.headimg}">      
+                    </td>
+    	        	<td>{$v.name}</td>
+                    <td>{$v.realname}</td>
+                    <td>{$v.phone}</td>
+                    <td><eq name="v.last_time" value="0">--<else/>{:date('Y-m-d H:i:s',$v['last_time'])}</eq></td>
+                    <td>{$v.role_name}</td>
+    	        	<td>
+    	        		<eq name="v.status" value="1">
+    	        			正常
+    	        		<else/>
+    	        			禁用
+    	        		</eq>
+    	        	</td>
+    	        	<td>
+    	        		<a onclick="showLayerFim('详情','/power/showUser?id={$v.id}');" href="javascript:;">详情</a>
+    	        		<a onclick="showLayerFim('编辑管理员信息','/power/doneUser?id={$v.id}');" href="javascript:;">编辑</a>
+    	        		<a onclick="getDel({id:{$v.id}},'delUser','用户删除后无法恢复，确定删除吗？')" href="javascript:;">删除</a>
+                        <a onclick="getReset({id:{$v.id}},'resetPwdUser')" href="javascript:;">初始化密码</a>
+    	        	</td>
+    	        </tr>
+    	    </volist>
+        <else/>
+            <tr><td colspan="8">暂无数据！</td></tr>
+        </notempty>
+    </table>
+</block>
+
+<block name="jsDiv">
+    <js href="__STATIC__/laydate/laydate.js"/>
+    <js href="__STATIC__/js/time_choice.js" />
+    <script>
+        function getReset(data,url){
+            subAjax(data,url,function(cur){
+                if(cur.code==0){
+                    layer.msg('初始化成功，密码123456',{icon:1,time:1000});
+                }else{
+                    layer.msg(cur.msg,{icon:5,time:1000});
+                }
+            });
+        }
+    </script>
+</block>

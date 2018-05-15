@@ -1,0 +1,61 @@
+<extend name="base"/>
+<block name="title"> 模块管理 </block>
+<block name="css">
+</block>
+<block name="body">
+    <!-- html代码 -->
+    <div class="search">
+        <form action="/power/role" method="post">
+            <span>名称搜索：</span>
+            <input type="text" placeholder="角色名称（支持模糊查询）" value="{$search['like_str']}" name="like_str"/>
+            <button>搜索</button>
+        </form>
+    </div>
+    <div class="btn-caoz">
+        <a class="btn-a" onclick="showLayerFim('添加角色','/power/doneRole');" href="javascript:;">添加角色</a>
+    </div>
+    <table class="table">
+        <tr>
+            <th class="tr-05">Id</th>
+            <th class="">角色名称</th>
+            <th class="">角色简介</th>
+            <th class="">修改时间</th>
+            <th class="">创建人</th>
+            <th class="">创建时间</th>
+            <th class="">状态</th>
+            <th class="">操作</th>
+        </tr>
+        <notempty name="list['data']">
+            <volist name="list['data']" id="v">
+    	        <tr>
+    	        	<td>{$v.id}</td>
+    	        	<td>{$v.name}</td>
+    	        	<td><empty name="v.summary">--<else/>{$v.summary}</empty></td>
+    	        	<td><eq name="v.update_time" value="0">--<else/>{:date('Y-m-d H:i',$v['update_time'])}</eq></td>
+    	        	<td><empty name="v.create_name">初始化角色<else/>{$v.create_name}</empty></td>
+    	        	<td>{:date('Y-m-d H:i',$v['create_time'])}</td>
+    	        	<td>
+    	        		<eq name="v.status" value="1">
+    	        			正常
+    	        		<else/>
+    	        			禁用
+    	        		</eq>
+    	        	</td>
+    	        	<td>
+                        <gt name="v.id" value="1">
+        	        		<a onclick="showLayerFim('编辑权限','/power/doneRoleJoin?id={$v.id}');" href="javascript:;">权限</a>
+        	        		<a onclick="showLayerFim('编辑角色','/power/doneRole?id={$v.id}');" href="javascript:;">编辑</a>
+        	        		<a onclick="getDel({id:{$v.id}},'delRole')" href="javascript:;">删除</a>
+                        <else/>
+                            <span>初始管理，禁止配置</span>
+                        </gt>
+    	        	</td>
+    	        </tr>
+    	    </volist>
+        <else/>
+            <tr><td colspan="9">暂无数据！</td></tr>
+        </notempty>
+    </table>
+
+
+</block>

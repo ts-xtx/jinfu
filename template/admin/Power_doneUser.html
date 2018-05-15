@@ -1,0 +1,127 @@
+<extend name="base"/>
+<block name="title"> 编辑管理员信息 </block>
+<block name="css">
+    <style>
+        .headimg { width: 100px;border-radius: 50%; }
+    </style>
+</block>
+<block name="body">
+    <div class="done-div">
+        <table class="done-table">
+            <tr>
+                <td><p>角色账号<span>*</span>：</p></td>
+                <td>
+                    <img notice="请上传角色头像" class="headimg" <notempty name="cur.headimg">src="{$cur.headimg}"<else/>src="__STATIC__/imgs/UploadImg.jpg"</notempty>>
+                </td>
+            </tr>
+            <tr>
+                <td><p>角色账号<span>*</span>：</p></td>
+                <td><input type="text" class="form_data" name="name" notice="请填写角色账号" value="{$cur.name}"></td>
+            </tr>
+            <empty name="$_GET['id']">
+                <tr>
+                    <td><p>密码<span>*</span>：</p></td>
+                    <td><input class="form_data" name="pwd" notice="请填写角色密码" type="password"></td>
+                </tr>
+            </empty>
+            <tr>
+                <td><p>手机号<span>*</span>：</p></td>
+                <td><input type="text" class="form_data" name="phone" notice="请填写角色手机号" value="{$cur.phone}"></td>
+            </tr>
+            <tr>
+                <td><p>真实姓名<span>*</span>：</p></td>
+                <td><input type="text" class="form_data" name="realname" notice="请填写真实姓名" value="{$cur.realname}"></td>
+            </tr>
+            <tr>
+                <td><p>角色简介<span></span>：</p></td>
+                <td>
+                    <textarea class="summary">{$cur.summary}</textarea>
+                </td>
+            </tr>
+            <empty name="$_GET['flag']">
+                <tr>
+                    <td>
+                        <p>所属角色<span>*</span>：</p>
+                    </td>
+                    <td>
+                        <select name="role_id" value="{$cur.role_id}" class="done-select role_id">
+                            <volist name="role_list" id="v">
+                                <option <eq name="cur.role_id" value="$v['id']">selected</eq> value="{$v.id}">{$v.name}</option>
+                            </volist>
+                        </select>
+                    </td>
+                </tr>
+            </empty>
+            <tr>
+                <td><p>性别<span>*</span>：</p></td>
+                <td>{:radioHtml($cur['sex'],$sex)}</td>
+            </tr>
+            <empty name="$_GET['flag']">
+                <tr>
+                    <td><p>是否启用<span>*</span>：</p></td>
+                    <td>{:radioHtml($cur['status'],$status)}</td>
+                </tr>
+            </empty>
+        </table>
+        <div style="width: 160px;margin: 0 auto">
+            <button class="done-sub" align="center">提交</button>
+        </div>
+    </div>
+</block>
+<block name="jsDiv">
+    <script>
+        function checkRadio(obj){
+            $('.'+$(obj).attr('class')).parents("label").children("span").removeClass("article_radio");
+            $(obj).parents("label").children("span").addClass("article_radio");
+        }
+
+        $('.headimg').click(function(){
+            uploadCropImage('头像上传',function(url){
+                $('.headimg').attr('src',url);
+            })
+        })
+
+        $(function(){
+            $('.done-sub').click(function(){
+                var data={};
+                data['id']=headId;
+                for(var i=0;i<$('.form_data[type=text]').length;i++){
+                    if($.trim($('.form_data[type=text]').eq(i).val())==''){
+                        layer.msg($('.form_data[type=text]').eq(i).attr('notice'),{icon:5,time:1000});
+                        return false;
+                    }else{
+                        if($('.form_data[type=text]').eq(i).attr('name')=='phone'){
+                            if(/^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1})|(17[0-9]{1}))+\d{8})$/.test($('.form_data[type=text]').eq(i).val())){
+                                data[$('.form_data[type=text]').eq(i).attr('name')]=$('.form_data[type=text]').eq(i).val();
+                            }else{
+                                layer.msg('手机号格式错误，请检查',{icon:5,time:1000});
+                                return false;
+                            }
+                        }else{
+                            data[$('.form_data[type=text]').eq(i).attr('name')]=$('.form_data[type=text]').eq(i).val();
+                        }
+                    }
+                }
+                data['summary']=$('.summary').val();
+                data['sex'] = $(".sex_radio:checked").val();
+                data['status'] = $(".status_radio:checked").val();
+                data['headimg']=$('.headimg').attr('src');
+                data['role_id']=$('.role_id').val();
+                if(data['headimg']=='/public/static/imgs/UploadImg.jpg'){
+                    layer.msg('请上传角色头像',{icon:5,time:1000});
+                    return false;
+                }
+                subAjax(data,'/power/doUser',function(cur){
+                    if(cur.code==0){
+                        layer.msg(cur.msg,{icon:1,time:1000});
+                        setTimeout(function(){
+                            parent.location.reload();
+                        },1000);
+                    }else{
+                        layer.msg(cur.msg,{icon:5,time:1000});
+                    }
+                },'确定提交吗？');
+            })
+        })
+    </script>
+</block>

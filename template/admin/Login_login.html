@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<!-- saved from url=(0042)http://wxcrmadmin.newachina.com/login.html -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>login</title>
+    <link type="text/css" href="__CSS__/login.css" rel="stylesheet">
+    <style>
+        /*登录背景图*/
+        html,body{height: 100%}
+        body{ background: url(__IMG__/login/intersection.png) no-repeat center center; background-attachment: fixed; background-size: cover;}
+    </style>
+    <link rel="stylesheet" href="__STATIC__/layer/theme/default/layer.css" style="">
+</head>
+<body>
+    <div class="loginCount">
+        <div class="login_logo fl">
+            <div class="teng_Logo"> <img src="__IMG__/login/juva_logo_big.png"> </div>
+            <div class="teng_font"> <h4>login</h4> <p>统一登录中心</p> </div>
+            <div class="teng_foot"> 框架管理平台 </div>
+        </div><!--login_logo end-->
+        <div class="login_inp fr">
+            <div class="login_Tx"> <img src="__IMG__/login/tx.png"> </div>
+            <div class="login_wapper">
+                <div class="login_inputFile">
+                    <ul>
+                        <li> <div class="width_310"><input type="text" id="login_name" placeholder="账号"></div> </li>
+                        <li>
+                            <div class="width_310 fl password"><input id="login_pwd" type="password" placeholder="密码"></div>
+                        </li>
+                        <li>
+                            <div class="width_180 fl"><input type="text" id="verify_code" placeholder="验证码"></div>
+                            <a href="javascript:;" class="ts_yzm fr"><img src="verify" id="verify-img" onclick="javascript:refreshCode();"></a>
+                        </li>
+                    </ul>
+                </div><!--login_inputFile end-->
+                <div class="loginBtn"> <button act="yes" id="toLogin">登录</button> </div>
+                <input type="hidden" value="/" id="loginUrl">
+                <input type="hidden" value="doLogin" id="toUrl">
+            </div><!--login_wapper end-->
+        </div><!--login_inp end-->
+    </div><!--loginCount end-->
+    <script type="text/javascript" src="__STATIC__/js/jquery.1.11.2.js"></script>
+    <script type="text/javascript" src="__STATIC__/layer/layer.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $(".forget_fl").click(function () {
+                var remember_check= $(this).children("input");
+                var remember_span= $(this).children("i");
+                var reme=  remember_check.is(":checked")
+                if (!reme) {
+                    remember_check.prop("checked",true);
+                    remember_span.addClass("active");
+                } else {
+                    remember_check.prop("checked",false);
+                    remember_span.removeClass("active");
+                }
+
+            })
+            //input 提示
+            $(".login_inputFile>ul>li>div>input").click(function () {
+                var content = $(this).attr('placeholder');
+                layer.tips('请输入'+content, $(this), {
+                    tips: [2, '#D0AA6A'],
+                    time: 1000
+                });
+            })
+            $('#toLogin').click(function(){
+              var cur = $(this);
+              var act = cur.attr('act');
+              if(act == 'no'){
+                  return false;
+              }
+              cur.attr('act','no');
+              var login_name = $('#login_name').val();
+              var password = $('#login_pwd').val();
+              var verify_code = $('#verify_code').val();
+              if(login_name.length < 1){
+                layer.msg('登录名不能为空');
+                cur.attr('act','yes');
+                return false;
+              }
+              if(password.length < 1 || password.length >16){
+                layer.msg('登录密码长度错误');
+                cur.attr('act','yes');
+                return false;
+              }
+              if(verify_code.length == 0){
+                layer.msg('请输入验证码');
+                cur.attr('act','yes');
+                return false;
+              }
+              var data = {username:login_name,password:password,verify_code:verify_code};
+              var back = $('#loginUrl').val();
+              var url = $('#toUrl').val();
+              $.ajax({
+                type : 'post',
+                url : url,
+                data : data,
+                dataType: 'json',
+                beforeSend:function(){
+                  var index = layer.load(0, {
+                    shade: [0.5,'#fff']
+                  });
+                },
+                success : function(d){
+                  cur.attr('act','yes');
+                  layer.closeAll('loading');
+                  if(d.code == 0){
+                    layer.msg('登录成功');
+                    setTimeout(function(){
+                      window.location.href = back;
+                    },1500);
+                  }else{
+                    layer.msg(d.msg);return false;
+                  }
+                },
+                error : function(){
+                  cur.attr('act','yes');
+                  layer.msg('网络错误',{icon:2});
+                },
+                complete:function(){
+                  cur.attr('act','yes');
+                  refreshCode();
+                  layer.closeAll('loading');
+                }
+              })
+            });
+            document.onkeydown=function(event){
+                var e = event || window.event || arguments.callee.caller.arguments[0];
+                 if(e && e.keyCode==13){
+                  $('#toLogin').click();   
+                 }
+              };
+          });
+
+        function refreshCode(){
+            $('#verify-img').attr('src','verify');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>FRMAE</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="__STATIC__/bootstrap-3.3.5-dist/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="__CSS__/base.css">
+	<link href="__STATIC__/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
+	<div class="topbar">
+		<div class="topbar-left">
+			<a class="logo" href="/"> <span>Admin<span>istration</span></span> </a>
+		</div>
+        <div class="navbar navbar-default" role="navigation">
+        	<i class="glyphicon glyphicon-list"></i>
+            <div class="container-fluid">
+                <h4 class="page-title"></h4>
+            </div>
+        </div>
+	</div>
+	<div class="left side-menu">
+        <div class="slimScrollDiv">
+        	<div class="sidebar-inner slimscrollleft" scroll="no">
+	            <div class="user-box">
+	                <div class="user-img">
+	                   	<a href="javascript:;" onclick="showLayerFim('编辑信息','/power/doneUser?id={$admin.id}&flag=1');">
+	                   		<img src="{$admin.headimg}" alt="user-img" title="编辑信息" class="rounded-circle img-thumbnail img-responsive">
+	                   	</a>
+	                </div>
+	                <h5>
+	                	<a href="javascript:;" onclick="showLayerFim('编辑信息','/power/doneUser?id={$admin.id}&flag=1');" title="编辑信息">
+	                		{$admin.role_name}-{$admin.realname}
+	                	</a>
+	                </h5>
+	                <ul class="list-inline">
+	                    <li class="list-inline-item">
+	                        <a href="javascript:;" onclick="showLayerFim('编辑信息','/Index/pwd');" title="修改密码">
+	                        	<i class="fa fa-key fa-fw"></i>
+	                        </a>
+	                    </li>
+	                    <li class="list-inline-item">
+	                        <a href="exitLogin" title="退出" class="text-custom">
+	                        	<i class="fa fa-sign-out"></i>
+	                        </a>
+	                    </li>
+	                </ul>
+	            </div>
+                <div id="sidebar-menu"> <ul> {:configMenu()} </ul> </div>
+	        </div>
+	    </div>
+	</div>
+    <div class="content-page" >
+        <iframe id="iframe" frameborder="0"  width="100%" height="100%" onload="stateChangeFirefox(this)" onreadystatechange="stateChangeIE(this)" scrolling="auto" src="" name="iframe" ></iframe>
+        <div class="load-iframe">
+        	<img src="__IMG__/loading.gif">
+        </div>
+    </div>
+    <div class="zhezhao"></div>
+	<script src="__JS__/jquery.min.js"></script>
+    <script src="__JS__/waves.js"></script>
+    <script src="__JS__/jquery.app.js"></script>
+    <script src="__JS__/jquery.slimscroll.js"></script>
+    <script src="__STATIC__/layer/layer.js"></script>
+    <script src="__JS__/public.js"></script>
+    <script>
+    	$(function(){
+    		$('.has_sub>a').click(function(){
+    			if($(this).attr('href')!='javascript:;'){
+    				$('.page-title').html($(this).children('span').eq(1).html());
+    				loads();
+    			}
+    		})
+
+    		if($('.has_sub>a').attr('href')=='javascript:;'){
+    			var url_iframe=$('.has_sub>ul>li:eq(0)>a').attr('href');
+    			$('.page-title').html($('.has_sub>ul>li:eq(0)>a').text());
+    		}else{
+    			var url_iframe=$('.has_sub>a').attr('href');
+    			$('.page-title').html($('.has_sub>a').eq(0).text());
+    			loads();
+    		}
+    		$('#iframe').attr('src',url_iframe);
+
+    		$('.slimscrollleft').slimscroll({ height: 'auto' });
+			$(".waves-effect").click(function(event){
+				if(!$(this).next("ul").html()){
+					$(this).addClass('subdrop');
+					$(".list-unstyled>li>a").removeClass('do_dianji');
+				}
+				event.stopPropagation();
+			})
+			$(".navbar>i").click(function(){
+				if($('.side-menu').css('left')=='0px'){
+					$('.side-menu').css('left','-250px');
+					$('.zhezhao').css('display','none');
+				}else{
+					$('.zhezhao').css('display','block');
+					$('.side-menu').css('left','0');
+				}
+			})
+			$('.zhezhao').click(function(){
+				$('.side-menu').css('left','-250px');
+				$('.zhezhao').css('display','none');
+			})
+			$(".list-unstyled>li>a").click(function(){
+				$('.page-title').html($(this).html());
+				loads();
+				$(".list-unstyled>li>a").removeClass('do_dianji');
+				$(this).addClass('do_dianji');
+			})
+			$(".navbar>ul>li>a").click(function(){
+				$(".navbar>ul>li>a").removeClass('do_top_dianji');
+				$(this).addClass('do_top_dianji');
+			})
+			$(window).resize(function() {
+                if($("body").width()>768){
+                    $('.side-menu').css('left','0');
+                    $('.zhezhao').css('display','none');
+                }else{
+                    $('.side-menu').css('left','-250px');
+                    $('.zhezhao').css('display','none');
+                }
+            });
+    	})
+    	
+    	function loads(){
+			$('.load-iframe').show();
+    	}
+
+    	function stateChangeIE(_frame) {
+        	if (_frame.readyState == "complete"){
+        		if($('.load-iframe').css('display')=='block'){
+        			$('.load-iframe').toggle(500);	
+        		}
+            }
+        }
+        function stateChangeFirefox(_frame) {
+    		if($('.load-iframe').css('display')=='block'){
+    			$('.load-iframe').toggle(500);	
+    		}
+        }
+    </script>
+</body>
+</html>

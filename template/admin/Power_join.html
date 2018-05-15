@@ -1,0 +1,129 @@
+<extend name="base"/>
+<block name="title"> 模块管理 </block>
+<block name="css">
+    <link href="__STATIC__/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
+</block>
+<block name="body">
+    <div class="btn-caoz">
+        <a class="btn-a" onclick="showLayerFim('添加模块','/power/doneJoin');" href="javascript:;">添加模块</a>
+        <a class="btn-a" onclick="delAllMenu();" href="javascript:;">批量删除</a>
+    </div>
+    <table class="table">
+        <tr>
+            <th class="tr-05"><label><input type="checkbox" class="checkAll" onclick="javascript:checkValue(this);"><span class="article_all"></span></label></th>
+            <th class="">模块名称</th>
+            <th class="">模块类型</th>
+            <th class="">url</th>
+            <th class="">路由</th>
+            <th class="">模块顺序</th>
+            <th class="">创建时间</th>
+            <th class="">创建人</th>
+            <th class="">操作</th>
+        </tr>
+        <volist name="list" id="v">
+            <tr>
+                <td>
+                    <label><input type="checkbox" value="{$v.id}" class="check" onclick="javascript:checkValue(this);"><span class="article_all"></span></label>
+                </td>
+                <td style="text-align: left;">&nbsp;&nbsp;{$v.name}</td>
+                <td><eq name="v.type" value="1">主菜单<else/>二级目录</eq></td>
+                <td><empty name="v.url">--<else/>{$v.url}</empty></td>
+                <td><empty name="v.role_url">--<else/>{$v.role_url}</empty></td>
+                <td>
+                    <a title="向上" data-type="1" data-id="{$v.id}" class="sortc" href="javascript:;">
+                        <i class="fa fa-arrow-up"></i>
+                    </a>
+                    <a title="向下" data-type="2" data-id="{$v.id}" class="sortc" href="javascript:;">
+                        <i class="fa fa-arrow-down"></i>
+                    </a>
+                </td>
+                <td>{$v.create_time}</td>
+                <td>{$v.create_name}</td>
+                <td>
+                    <a onclick="showLayerFim('编辑模块','/power/doneJoin?id={$v.id}');" href="javascript:;">编辑</a>
+                    <a onclick="getDel({id:{$v.id}},'delJoin')" href="javascript:;">删除</a>
+                </td>
+            </tr>
+            <volist name="v._child" id="val">
+                <tr>
+                <td>
+                    <label><input type="checkbox" value="{$val.id}" class="check" onclick="javascript:checkValue(this);"><span class="article_all"></span></label>
+                </td>
+                <td style="text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$val.name}</td>
+                <td><eq name="val.type" value="1">主菜单<else/>二级目录</eq></td>
+                <td>{$val.url}</td>
+                <td>{$val.role_url}</td>
+                <td>--</td>
+                <td>{$val.create_time}</td>
+                <td>{$val.create_name}</td>
+                <td>
+                    <a onclick="showLayerFim('编辑模块','/power/doneJoin?id={$val.id}');" href="javascript:;">编辑</a>
+                    <a onclick="getDel({id:{$val.id}},'delJoin')" href="javascript:;">删除</a>
+                </td>
+            </tr>
+            </volist>
+        </volist>
+    </table>
+</block>
+<block name="jsDiv">
+    <!-- 底部js文件 -->
+    <script>
+        function checkValue(obj){
+            if($(obj).hasClass('checkAll')){
+                if($("input[class='check']:checked").length==$("input[class='check']").length){
+                    $("input[class='check']").parents("label").children("span").removeClass("article_active");
+                    $("input[class='check']").prop('checked',false);
+                    $(obj).parents("label").children("span").removeClass("article_active");
+                }else{
+                    $("input[class='check']").parents("label").children("span").addClass("article_active");
+                    $("input[class='check']").prop('checked',true);
+                    $(obj).parents("label").children("span").addClass("article_active");
+                }
+            }else{
+                if ($(obj).is(':checked')) {
+                    $(obj).parents("label").children("span").addClass("article_active");
+                    if($("input[class='check']:checked").length==$("input[class='check']").length){
+                        $("input[class='checkAll']").parents("label").children("span").addClass("article_active");
+                        $("input[class='checkAll']").prop('checked',true);
+                    }
+                }else{
+                    $(obj).parents("label").children("span").removeClass("article_active");
+                    $("input[class='checkAll']").parents("label").children("span").removeClass("article_active");
+                    $("input[class='checkAll']").prop('checked',false);
+                }
+            }
+        }
+
+        //批量删除
+        function delAllMenu(){
+            if($("input[class='check']:checked").length==0){
+                layer.msg('请选中要删除的模块', {icon: 0});
+            }else{
+                var value='';
+                for(var i=0;i<$("input[class='check']:checked").length;i++){
+                    value += $("input[class='check']:checked").eq(i).val()+',';
+                }
+                getDel({ids:value},'delJoin','确定删除选中的值吗？');
+            }
+        }
+
+        $(function(){
+            //排序
+            $("body").on("click",".sortc",function(){
+                var type = $(this).attr('data-type');
+                var id = $(this).attr('data-id');
+                var data = {flag:type,id:id};
+                subAjax(data,'/power/menuSort',function(cur){
+                    if(cur.code==0){
+                        layer.msg('排序更换成功',{icon:1,time:1000});
+                        setTimeout(function(){
+                            location.reload();
+                        },1000);
+                    }else{
+                        layer.msg(cur.msg,{icon:5,time:1000});
+                    }
+                });
+            })
+        })
+    </script>
+</block>

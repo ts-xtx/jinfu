@@ -1,0 +1,117 @@
+<extend name="base"/>
+<block name="title"> 模块管理 </block>
+<block name="css">
+    <link href="__STATIC__/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        .dishide { display: none }
+        td:nth-child(2) { text-align: left!important; }
+        .dishide td:nth-child(2) { text-indent: 2rem }
+    </style>
+</block>
+<block name="body">
+    <div class="btn-caoz">
+        <a class="btn-a" onclick="showLayerFim('添加模块','/power/doneJoin');" href="javascript:;">添加模块</a>
+        <a class="btn-a" onclick="delAllMenu();" href="javascript:;">批量删除</a>
+    </div>
+    <table class="table">
+        <tr>
+            <th class="tr-05"></th>
+            <th>分类名称</th>
+            <th>类型识别码</th>
+            <th>备注</th>
+            <th>操作</th>
+        </tr>
+        <notempty name="list">
+            <volist name="list" id="v">
+                <tr>
+                    <td>
+                        <label>
+                            <input type="checkbox" class="check" onclick="javascript:checkValue(this);">
+                            <span class="article_all"></span>
+                        </label>
+                    </td>
+                    <td>{$v.value}<a href="javascript:;" class="ckeck_show" data-is="1" data-id="{$v.id}">展开</a></td>
+                    <td>{$v.code}</td>
+                    <td>{$v.summary}</td>
+                    <td>
+                        <a onclick="showLayerFim('编辑管理员信息','/power/d');" href="javascript:;">编辑</a>
+                        <a onclick="getDel({id:{$v.id}},'delCategory','用户删除后无法恢复，确定删除吗？')" href="javascript:;">删除</a>
+                    </td>
+                </tr>
+                <volist name="v._child" id="val">
+                    <tr class="dishide" data-ids="{$v.id}">
+                        <td>
+                            <label>
+                                <input type="checkbox" class="check" onclick="javascript:checkValue(this);">
+                                <span class="article_all"></span>
+                            </label>
+                        </td>
+                        <td>{$val.value}</td>
+                        <td></td>
+                        <td>{$val.summary}</td>
+                        <td>
+                            <a onclick="showLayerFim('编辑管理员信息','/power/doneU');" href="javascript:;">编辑</a>
+                            <a onclick="getDel({id:{$v.id}},'delCategory','用户删除后无法恢复，确定删除吗？')" href="javascript:;">删除</a>
+                        </td>
+                    </tr>
+                </volist>
+            </volist>
+        </notempty>
+    </table>
+</block>
+<block name="jsDiv">
+    <!-- 底部js文件 -->
+    <script>
+        //显示隐藏
+        $('.ckeck_show').click(function(){
+            var this_id=$(this).attr('data-id');
+            var this_is=$(this).attr('data-is');
+            if(this_is==1){
+                $(this).html('隐藏');
+                $(this).attr('data-is',2);
+                $('.dishide[data-ids='+this_id+']').show();
+            }else{
+                $(this).html('展开');
+                $(this).attr('data-is',1);
+                $('.dishide[data-ids='+this_id+']').hide();
+            }
+        });
+        function checkValue(obj){
+            if($(obj).hasClass('ckeck_all')){
+                if($("input[class='check']:checked").length==$("input[class='check']").length){
+                    $("input[class='check']").parents("label").children("span").removeClass("article_active");
+                    $("input[class='check']").prop('checked',false);
+                    $(obj).parents("label").children("span").removeClass("article_active");
+                }else{
+                    $("input[class='check']").parents("label").children("span").addClass("article_active");
+                    $("input[class='check']").prop('checked',true);
+                    $(obj).parents("label").children("span").addClass("article_active");
+                }
+            }else{
+                if ($(obj).is(':checked')) {
+                    $(obj).parents("label").children("span").addClass("article_active");
+                    if($("input[class='check']:checked").length==$("input[class='check']").length){
+                        $("input[class='checkAll']").parents("label").children("span").addClass("article_active");
+                        $("input[class='checkAll']").prop('checked',true);
+                    }
+                }else{
+                    $(obj).parents("label").children("span").removeClass("article_active");
+                    $("input[class='checkAll']").parents("label").children("span").removeClass("article_active");
+                    $("input[class='checkAll']").prop('checked',false);
+                }
+            }
+        }
+        //批量删除
+        function delAllMenu(){
+            if($("input[class='check']:checked").length==0){
+                layer.msg('请选中要删除的模块', {icon: 0});
+            }else{
+                var value='';
+                for(var i=0;i<$("input[class='check']:checked").length;i++){
+                    value += $("input[class='check']:checked").eq(i).val()+',';
+                }
+                getDel({ids:value},'delJoin','确定删除选中的值吗？');
+            }
+        }
+    </script>
+</block>

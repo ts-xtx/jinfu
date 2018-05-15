@@ -1,0 +1,109 @@
+<extend name="base"/>
+<block name="title"> 模块管理 </block>
+<block name="css">
+    <link href="__STATIC__/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
+</block>
+<block name="body">
+    <div class="search">
+        <form action="/News/list" method="post">
+            <span>模糊搜索：</span>
+            <input type="text" placeholder="名称（支持模糊搜索）" value="{$search['like_str']}" name="like_str"/>
+            <span>发布时间：</span>
+            <input type="text" placeholder="开始时间" id="start-time" value="{$search['start-time']}" name="start-time"/> -
+            <input type="text" placeholder="结束时间" id="end-time" value="{$search['end-time']}" name="end-time"/>
+            <span>状态：</span>
+            <select name="status">
+                <option value="">全部</option>
+                <option <eq name="search.status" value="1">selected</eq> value="1">一级</option>
+                <option <eq name="search.status" value="2">selected</eq> value="2">二级</option>
+            </select>
+            <button>搜索</button>
+        </form>
+    </div>
+    <div class="btn-caoz">
+        <a class="btn-a" onclick="showLayerFim('添加消息','/news/doneNews');" href="javascript:;">添加消息</a>
+        <a class="btn-a" onclick="delAllMenu();" href="javascript:;">批量删除</a>
+    </div>
+    <table class="table">
+        <tr>
+            <th class="tr-05"><label><input type="checkbox" class="checkAll" onclick="javascript:checkValue(this);"><span class="article_all"></span></label></th>
+            <th>名称</th>
+            <th>内容</th>
+            <th>人群</th>
+            <th>创建时间</th>
+            <th>操作</th>
+        </tr>
+        <volist name="list.data" id="v">
+            <tr>
+                <td>
+                    <label><input type="checkbox" value="{$v.id}" class="check" onclick="javascript:checkValue(this);"><span class="article_all"></span></label>
+                </td>
+                <td>{$v.title}</td>
+                <td>{$v.content}</td>
+                <td>
+                    <switch name="v.type">
+                        <case value="1">
+                            一级代理
+                        </case>
+                        <case value="2">
+                            二级代理
+                        </case>
+                        <case value="3">
+                            所有
+                        </case>
+                    </switch>
+                </td>
+                <td>{:date('Y.m.d H:i',$v['create_time'])}</td>
+                <td>
+                    <a onclick="showLayerFim('编辑信息','/news/doneNews?id={$v.id}');" href="javascript:;">编辑</a>
+                    <a onclick="getDel({id:{$v.id}},'delNews')" href="javascript:;">删除</a>
+                </td>
+            </tr>
+        </volist>
+    </table>
+</block>
+<block name="jsDiv">
+    <js href="__STATIC__/laydate/laydate.js"/>
+    <js href="__STATIC__/js/time_choice.js" />
+    <!-- 底部js文件 -->
+    <script>
+        function checkValue(obj){
+            if($(obj).hasClass('checkAll')){
+                if($("input[class='check']:checked").length==$("input[class='check']").length){
+                    $("input[class='check']").parents("label").children("span").removeClass("article_active");
+                    $("input[class='check']").prop('checked',false);
+                    $(obj).parents("label").children("span").removeClass("article_active");
+                }else{
+                    $("input[class='check']").parents("label").children("span").addClass("article_active");
+                    $("input[class='check']").prop('checked',true);
+                    $(obj).parents("label").children("span").addClass("article_active");
+                }
+            }else{
+                if ($(obj).is(':checked')) {
+                    $(obj).parents("label").children("span").addClass("article_active");
+                    if($("input[class='check']:checked").length==$("input[class='check']").length){
+                        $("input[class='checkAll']").parents("label").children("span").addClass("article_active");
+                        $("input[class='checkAll']").prop('checked',true);
+                    }
+                }else{
+                    $(obj).parents("label").children("span").removeClass("article_active");
+                    $("input[class='checkAll']").parents("label").children("span").removeClass("article_active");
+                    $("input[class='checkAll']").prop('checked',false);
+                }
+            }
+        }
+
+        //批量删除
+        function delAllMenu(){
+            if($("input[class='check']:checked").length==0){
+                layer.msg('请选中要删除的模块', {icon: 0});
+            }else{
+                var value='';
+                for(var i=0;i<$("input[class='check']:checked").length;i++){
+                    value += $("input[class='check']:checked").eq(i).val()+',';
+                }
+                getDel({ids:value},'delNews','确定删除选中的值吗？');
+            }
+        }
+    </script>
+</block>

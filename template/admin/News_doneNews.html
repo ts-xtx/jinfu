@@ -1,0 +1,67 @@
+<extend name="base"/>
+<block name="title"> 模块管理 </block>
+<block name="css">
+</block>
+<block name="body">
+    <div class="done-div">
+        <table class="done-table">
+            <tr>
+                <td><p>名称<span>*</span>：</p></td>
+                <td><input type="text" class="title" value="{$cur.title}" name="title"></td>
+            </tr>
+            <tr>
+                <td><p>消息<span>*</span>：</p></td>
+                <td>
+                    <textarea class="content">{$cur.content}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td><p>人群<span>*</span>：</p></td>
+                <td>
+                    {:radioHtml($cur['type'],$type)}
+                </td>
+            </tr>
+        </table>
+        <div style="width: 160px;margin: 0 auto">
+            <button class="done-sub" align="center">提交</button>
+        </div>
+    </div>
+</block>
+<block name="jsDiv">
+    <script>
+        function checkRadio(obj){
+            $(".label_radio").children("span").removeClass("article_radio");
+            $(obj).parents("label").children("span").addClass("article_radio");
+        }
+
+        $(function(){
+            $('.done-sub').click(function(){
+                var data={};
+                data['type'] = $(".data_radio:checked").val();
+                if($.trim($('.title').val())==''){
+                    layer.msg('请填写消息名称',{icon:5,time:1000});
+                    return false;
+                }else{
+                    data['title']=$('.title').val();
+                }
+                if($.trim($('.content').val())==''){
+                    layer.msg('请填写消息内容',{icon:5,time:1000});
+                    return false;
+                }else{
+                    data['content']=$('.content').val();
+                }
+                data['id']=headId;
+                subAjax(data,'/News/doNews',function(cur){
+                    if(cur.code==0){
+                        layer.msg(cur.msg,{icon:1,time:1000});
+                        setTimeout(function(){
+                            parent.location.reload();
+                        },1000);
+                    }else{
+                        layer.msg(cur.msg,{icon:5,time:1000});
+                    }
+                },'确定提交吗？');
+            })
+        })
+    </script>
+</block>

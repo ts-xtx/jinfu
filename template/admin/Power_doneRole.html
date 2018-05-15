@@ -1,0 +1,72 @@
+<extend name="base"/>
+<block name="title"> 模块管理 </block>
+<block name="css">
+</block>
+<block name="body">
+    <div class="done-div">
+        <table class="done-table">
+            <tr>
+                <td><p>角色名称<span>*</span>：</p></td>
+                <td><input type="text" class="t_name" value="{$cur.name}" name="name"></td>
+            </tr>
+            <tr>
+                <td><p>角色简介<span></span>：</p></td>
+                <td>
+                    <textarea class="t_summary">{$cur.summary}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td><p>模块类型<span>*</span>：</p></td>
+                <td>
+                    <label class="label_radio">
+                        <input type="radio" class="data_radio" <notempty name="cur.status"> <eq name="cur.status" value="1">checked</eq><else/>checked</notempty> onclick="checkRadio(this);" value="1" name="type">
+                        <span <notempty name="cur.status"><eq name="cur.status" value="1">class="article_radio"</eq><else/>class="article_radio"</notempty>></span>
+                        <em>开启</em>
+                    </label>
+                    <label class="label_radio">
+                        <input type="radio" class="data_radio" <eq name="cur.status" value="2">checked</eq> onclick="checkRadio(this);" value="2" name="type">
+                        <span <eq name="cur.status" value="2">class="article_radio"</eq>></span>
+                        <em>禁用</em>
+                    </label>
+                </td>
+            </tr>
+        </table>
+        <div style="width: 160px;margin: 0 auto">
+            <button class="done-sub" align="center">提交</button>
+        </div>
+    </div>
+</block>
+<block name="jsDiv">
+    <script>
+        function checkRadio(obj){
+            $(".label_radio").children("span").removeClass("article_radio");
+            $(obj).parents("label").children("span").addClass("article_radio");
+        }
+
+        $(function(){
+            $('.done-sub').click(function(){
+                var data={};
+                data['status'] = $(".data_radio:checked").val();
+
+                if($.trim($('.t_name').val())==''){
+                    layer.msg('请填写角色名称',{icon:5,time:1000});
+                    return false;
+                }else{
+                    data['name']=$('.t_name').val();
+                }
+                data['summary']=$('.t_summary').val();
+                data['id']=headId;
+                subAjax(data,'/power/doRole',function(cur){
+                    if(cur.code==0){
+                        layer.msg(cur.msg,{icon:1,time:1000});
+                        setTimeout(function(){
+                            parent.location.reload();
+                        },1000);
+                    }else{
+                        layer.msg(cur.msg,{icon:5,time:1000});
+                    }
+                },'确定提交吗？');
+            })
+        })
+    </script>
+</block>

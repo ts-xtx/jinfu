@@ -1,0 +1,35 @@
+<extend name="base"/>
+<block name="title"> 用户详情 </block>
+<block name="body">
+    <div class="show-div">
+        <table>
+            <tr>
+                <td rowspan='17' class="user_headimg" style="width: 200px;height: 100%">
+                    <img onclick="layer_photo('{$cur.headimg}','{$cur.nickname}');" class="headimg fl" src="{$cur.headimg}">
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><span>姓名：</span>{$cur.nickname}</td>
+            </tr>
+            <tr>
+                <td><span>性别：</span><eq name="cur.sex" value="1">男<else/>女</eq></td>
+            </tr>
+            <tr>
+                <td><span>手机号：</span><notempty name="cur.phone">{$cur.phone}<else/>--</notempty></td>
+            </tr>
+            <tr>
+                <td><span>收货姓名：</span><notempty name="cur.realname">{$cur.realname}<else/>--</notempty></td>
+            </tr>
+            <tr>
+                <td><span>收货地址：</span><notempty name="cur.address">{$cur.address}<else/>--</notempty></td>
+            </tr>
+            <tr>
+                <td><span>创建时间：</span>{:date('Y-m-d H:i',$cur['create_time'])}</td>
+            </tr>
+            <tr>
+                <td><span>状态：</span><eq name="cur.status" value="1">正常<else/>禁用</eq></td>
+            </tr>
+        </table>
+    </div>
+</block>

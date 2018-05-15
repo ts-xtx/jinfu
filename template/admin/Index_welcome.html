@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>FRMAE</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="__STATIC__/bootstrap-3.3.5-dist/css/bootstrap.min.css">
+    <style>
+        html,body { margin:0;padding:0; }
+        html{ overflow: hidden;height: 100%;width: 100% }
+        body { overflow-y: scroll;height: 100%;overflow-x: hidden;padding: 1%;
+                width: -webkit-calc(100% + 16px);width: -moz-calc(100% + 16px);width: calc(100% + 16px);background: #ebeff2!important }
+        .col-md-4 { height: 300px; }
+    </style>
+</head>
+<body>
+    <div class="row">
+        <div id="main" class="col-xl-4 col-md-4"></div>
+        <div id="main2" class="col-xl-4 col-md-4"></div>
+        <div id="main3" class="col-xl-4 col-md-4"></div>
+    </div>
+    <div class="row">
+        <div id="main" class="col-xl-4 col-md-4"></div>
+        <div id="main2" class="col-xl-4 col-md-4"></div>
+        <div id="main3" class="col-xl-4 col-md-4"></div>
+    </div>
+
+    <script src="__STATIC__/js/jquery.1.11.2.js"></script>
+    <script src="__STATIC__/js/echarts.min.js"></script>
+    <script>
+        $(function(){
+            var myChart = echarts.init(document.getElementById('main'));
+            var myChart2 = echarts.init(document.getElementById('main2'));
+            var myChart3 = echarts.init(document.getElementById('main3'));
+
+            // 指定图表的配置项和数据
+            var option = {
+                title: {
+                    text: 'ECharts 入门示例'
+                },
+                tooltip: {},
+                legend: {
+                    data:['销量']
+                },
+                xAxis: {
+                    data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+                },
+                yAxis: {},
+                series: [{
+                    name: '销量',
+                    type: 'bar',
+                    data: [5, 20, 36, 10, 10, 20]
+                }]
+            };
+
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+            myChart2.setOption(option);
+            myChart3.setOption(option);
+        })
+    </script>
+</body>
+</html>

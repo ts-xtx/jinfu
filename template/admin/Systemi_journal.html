@@ -1,0 +1,45 @@
+<extend name="base"/>
+<block name="title"> 模块管理 </block>
+<block name="css">
+</block>
+<block name="body">
+    <div class="search">
+        <form action="/System/journal" method="post">
+            <span>模糊搜索：</span>
+            <input type="text" placeholder="登录名、姓名、手机号（支持模糊搜索）" value="{$search['like_str']}" name="like_str"/>
+            <span>操作时间：</span>
+            <input type="text" placeholder="开始时间" id="start-time" value="{$search['start-time']}" name="start-time"/> -
+            <input type="text" placeholder="结束时间" id="end-time" value="{$search['end-time']}" name="end-time"/>
+            <button>搜索</button>
+        </form>
+    </div>
+    <!-- html代码 -->
+    <table class="table">
+        <tr>
+            <th class="tr-05">序号</th>
+            <th class="">登录名</th>
+            <th class="">真实姓名</th>
+            <th class="">ip</th>
+            <th class="">时间</th>
+            <th class="">操作</th>
+        </tr>
+        <notempty name="list.data">
+            <volist name="list.data" id="v">
+                <tr>
+                    <td>{$key+1}</td>
+                    <td>{$v.name}</td>
+                    <td>{$v.realname}</td>
+                    <td>{$v.ip}</td>
+                    <td>{:date('Y-m-d H:i')}</td>
+                    <td>{$v.operation}</td>
+                </tr>
+            </volist>
+        <else/>
+            <tr><td colspan="6">暂无数据</td></tr>
+        </notempty>
+    </table>
+</block>
+<block name="jsDiv">
+    <js href="__STATIC__/laydate/laydate.js"/>
+    <js href="__STATIC__/js/time_choice.js" />
+</block>

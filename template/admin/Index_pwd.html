@@ -1,0 +1,57 @@
+<extend name="base"/>
+<block name="title"> 编辑管理员信息 </block>
+<block name="body">
+    <div class="done-div">
+        <table class="done-table">
+            <tr>
+                <td><p>原始密码<span>*</span>：</p></td>
+                <td><input type="password" class="ypwd"></td>
+            </tr>
+            <tr>
+                <td><p>新密码<span>*</span>：</p></td>
+                <td><input type="password" class="pwd"></td>
+            </tr>
+            <tr>
+                <td><p>再次确认<span>*</span>：</p></td>
+                <td><input type="password" class="pwd2"></td>
+            </tr>
+        </table>
+        <div style="width: 160px;margin: 0 auto">
+            <button class="done-sub" align="center">提交</button>
+        </div>
+    </div>
+</block>
+<block name="jsDiv">
+    <script>
+        $(function(){
+            $('.done-sub').click(function(){
+                var ypwd=$('.ypwd').val();
+                var pwd=$('.pwd').val();
+                var pwd2=$('.pwd2').val();
+                if($.trim(ypwd)==''){
+                    layer.msg('请输入原始密码！',{icon:5,time:1000});
+                }else if($.trim(pwd)==''){
+                    layer.msg('请输入新密码！',{icon:5,time:1000});
+                }else if($.trim(pwd2)==''){
+                    layer.msg('请再次输入新密码！',{icon:5,time:1000});
+                }else if(!/^[a-zA-Z\d_]{6,16}$/.test(pwd)){
+                    layer.msg('密码格式错误，密码是6-16位数字和字母的组合！',{icon:5,time:1000});
+                }else if(pwd!=pwd2){
+                    layer.msg('两次输入密码不一致，请检查！',{icon:5,time:1000});
+                }else{
+                    var data={ypwd:ypwd,pwd:pwd};
+                    subAjax(data,'',function(cur){
+                        if(cur.code==0){
+                            layer.msg(cur.msg,{icon:1,time:1000});
+                            setTimeout(function(){
+                                window.parent.location.href='/login';
+                            },1000);
+                        }else{
+                            layer.msg(cur.msg,{icon:5,time:1000});
+                        }
+                    },'确定提交吗？');
+                }
+            })
+        })
+    </script>
+</block>

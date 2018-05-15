@@ -1,0 +1,169 @@
+<extend name="base"/>
+<block name="title"> 模块管理 </block>
+<block name="css">
+
+</block>
+<block name="body">
+    <div class="done-div">
+        <table class="done-table">
+            <tr>
+                <td><p>模块名称<span>*</span>：</p></td>
+                <td><input type="text" class="form_data" value="{$cur.name}" notice="请填写模块名称" name="name"></td>
+            </tr>
+            <tr class="input-tr" <neq name="cur.type" value="2">style="display: none"</neq> >
+                <td><p>模块url<span>*</span>：</p></td>
+                <td><input type="text" class="form_data" value="{$cur.url}" notice="请填写模块url" name="url"></td>
+            </tr>
+            <tr class="input-tr" <neq name="cur.type" value="2">style="display: none"</neq>>
+                <td><p>模块路由<span>*</span>：</p></td>
+                <td><input type="text" class="form_data" value="{$cur.role_url}" notice="请填写模块路由" name="role_url"></td>
+            </tr>
+            <tr class="input-tr" <neq name="cur.type" value="2">style="display: none"</neq>>
+                <td><p>模块子路由<span>*</span>：</p></td>
+                <td>
+                    <textarea class="subnode">{$cur.subnode}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td><p>模块类型<span>*</span>：</p></td>
+                <td>
+                    <eq name="cur.type" value="1">
+                        <label class="label_radio">
+                            <input type="radio" class="data_radio" notice="请选择模块类型" checked onclick="checkRadio(this);" value="1" name="type">
+                            <span class="article_radio"></span>
+                            <em>一级菜单</em>
+                        </label>
+                        <label class="label_radio">
+                            <input type="radio" class="data_radio" onclick="checkRadio(this);" value="2" name="type">
+                            <span></span>
+                            <em>二级菜单</em>
+                        </label>
+                    <else />
+                        <empty name="cur.type">
+                            <label class="label_radio">
+                                <input type="radio" class="data_radio" notice="请选择模块类型" checked onclick="checkRadio(this);" value="1" name="type">
+                                <span class="article_radio"></span>
+                                <em>一级菜单</em>
+                            </label>
+                            <label class="label_radio">
+                                <input type="radio" class="data_radio" onclick="checkRadio(this);" value="2" name="type">
+                                <span></span>
+                                <em>二级菜单</em>
+                            </label>
+                        <else/>
+                            <label class="label_radio">
+                                <input type="radio" class="data_radio" notice="请选择模块类型" onclick="checkRadio(this);" value="1" name="type">
+                                <span></span>
+                                <em>一级菜单</em>
+                            </label>
+                            <label class="label_radio">
+                                <input type="radio" class="data_radio" checked onclick="checkRadio(this);" value="2" name="type">
+                                <span class="article_radio"></span>
+                                <em>二级菜单</em>
+                            </label>
+                        </empty>
+                    </eq>
+                </td>
+            </tr>
+            <eq name="cur.type" value="2">
+                <tr class="ico-tr" style="display: none">
+                    <td><p>模块图标<span>*</span>：</p></td>
+                    <td><input type="text" value="{$cur.ico}" name="ico"></td>
+                </tr>
+            <else />
+                <tr class="ico-tr">
+                    <td><p>模块图标<span>*</span>：</p></td>
+                    <td><input type="text" value="{$cur.ico}" name="ico"></td>
+                </tr>
+            </eq>
+            <tr>
+                <td>
+                    <p>选中所属模块<span>*</span>：</p>
+                </td>
+                <td>
+                    <select name="pid" value="{$cur.pid}" class="done-select">
+                        <notempty name="menu">
+                            <eq name="cur.type" value="1">
+                                <option value="0">项目</option>
+                                <volist name="menu" id="v">
+                                    <option disabled value="{$v.id}">{$v.name}</option>
+                                </volist>
+                            <else/>
+                                <option <notempty name="cur">disabled</notempty> value="0">项目</option>
+                                <volist name="menu" id="v">
+                                    <option <notempty name="cur"><eq name="cur.pid" value="$v['id']">selected</eq><else/>disabled </notempty> value="{$v.id}">{$v.name}</option>
+                                </volist>
+                            </eq>
+                        </notempty>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <div style="width: 160px;margin: 0 auto">
+            <button class="done-sub" align="center">提交</button>
+        </div>
+    </div>
+</block>
+<block name="jsDiv">
+    <script>
+        function checkRadio(obj){
+            $(".label_radio").children("span").removeClass("article_radio");
+            $(obj).parents("label").children("span").addClass("article_radio");
+            if($(obj).val()==1){
+                $('.ico-tr').show();
+                $('.input-tr').hide();
+                $('.done-select>option').attr('disabled',true);
+                $('.done-select>option').eq(0).attr('disabled',false);
+                $('.done-select').val(0);
+            }else{
+                $('.ico-tr').hide();
+                $('.input-tr').show();
+                $('.done-select>option').attr('disabled',false);
+                $('.done-select>option').eq(0).attr('disabled',true);
+                if($(".done-select").find("option:selected").val()==0){
+                    $('.done-select').val($('.done-select>option').eq(1).val());
+                }
+            }
+        }
+
+        $(function(){
+            $('.done-sub').click(function(){
+                var data={};
+                data['type'] = $(".data_radio:checked").val();
+                for(var i=0;i<$('.form_data[type=text]').length;i++){
+                    if($('.form_data[type=text]').eq(i).parents('tr').css('display')=='none'){
+                        continue;
+                    }
+                    if($.trim($('.form_data[type=text]').eq(i).val())==''){
+                        layer.msg($('.form_data[type=text]').eq(i).attr('notice'),{icon:5,time:1000});
+                        return false;
+                    }else{
+                        data[$('.form_data[type=text]').eq(i).attr('name')]=$('.form_data[type=text]').eq(i).val();
+                    }
+                }
+                if(data['type']==1){
+                    if($.trim($('input[name=ico]').val())==''){
+                        layer.msg('请填写模块ico',{icon:5,time:1000});
+                        return false;
+                    }else{
+                        data['ico']=$('input[name=ico]').val();
+                    }
+                }else{
+                    data['subnode']=$('.subnode').val();
+                    data['pid']=$('.done-select').val();
+                }
+                data['id']=headId;
+                subAjax(data,'/power/doJoin',function(cur){
+                    if(cur.code==0){
+                        layer.msg(cur.msg,{icon:1,time:1000});
+                        setTimeout(function(){
+                            parent.location.reload();
+                        },1000);
+                    }else{
+                        layer.msg(cur.msg,{icon:5,time:1000});
+                    }
+                },'确定提交吗？');
+            })
+        })
+    </script>
+</block>
